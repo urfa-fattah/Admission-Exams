@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>UniPro: Zenith Command (v5.1: Chronos Pro)</title>
+    <title>UniPro: Zenith Command (v8.0: Multi-Unit Elite)</title>
+    
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext x='50%25' y='90%25' style='font-size:80px; text-anchor:middle;'%3E%E2%9C%A7%3C/text%3E%3C/svg%3E" type="image/svg+xml">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
@@ -23,19 +25,21 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        bg: '#000814', // Deeper Blue-Black
-                        surface: '#071833', // Darker Blue-Surface
+                        bg: '#000814', 
+                        surface: '#071833', 
                         primary: '#4ade80', // Modern Green Accent
-                        accent: '#475569', // Slate
-                        success: '#10b981', // Emerald
-                        danger: '#f87171', // Red
-                        warn: '#fcd34d', // Amber
+                        accent: '#475569', 
+                        success: '#10b981', 
+                        danger: '#f87171', 
+                        warn: '#fcd34d', 
                     },
                     animation: {
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'scan': 'scan 4s linear infinite',
                         'mesh-pan': 'mesh-pan 60s linear infinite',
                         'border-spin': 'border-spin 3s linear infinite',
+                        'fade-in-down': 'fade-in-down 0.5s ease-out',
+                        'subtle-pulse': 'subtle-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                     },
                     keyframes: {
                         scan: {
@@ -50,6 +54,14 @@
                         'border-spin': {
                             '0%': { transform: 'rotate(0deg)' },
                             '100%': { transform: 'rotate(360deg)' }
+                        },
+                        'fade-in-down': {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        'subtle-pulse': { 
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '0.9' }
                         }
                     }
                 }
@@ -61,11 +73,9 @@
             background-color: #000814; 
             color: #e2e8f0; 
             overflow-x: hidden; 
-            /* Added smooth scrolling for improved UX */
             scroll-behavior: smooth;
         }
         
-        /* Awesome Mesh Blue Gradient Background */
         .mesh-gradient-bg {
             background: linear-gradient(-45deg, #071833, #020617, #071833, #1e3a8a);
             background-size: 400% 400%;
@@ -79,28 +89,38 @@
             opacity: 0.8;
         }
 
-        /* HUD Glass Effect */
         .hud-panel {
-            background: rgba(7, 24, 51, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 30px -10px rgba(0, 0, 0, 0.6);
-            transition: all 0.3s ease; /* Added transition for smoothness */
+            background: rgba(7, 24, 51, 0.9); 
+            backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s ease;
         }
         
         .hud-card {
-            background: linear-gradient(180deg, rgba(7, 24, 51, 0.6) 0%, rgba(7, 24, 51, 0.9) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative; /* Needed for pseudo-elements */
+            background: linear-gradient(180deg, rgba(7, 24, 51, 0.8) 0%, rgba(7, 24, 51, 1) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .hud-card::before { 
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(45deg, rgba(74, 222, 128, 0.05), transparent 50%, rgba(30, 41, 59, 0.08));
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
         }
         .hud-card:hover {
-            border-color: rgba(74, 222, 128, 0.4);
-            transform: translateY(-4px); /* Increased lift */
-            box-shadow: 0 12px 25px -5px rgba(74, 222, 128, 0.2); /* Enhanced shadow */
+            border-color: rgba(74, 222, 128, 0.6); 
+            transform: translateY(-5px); 
+            box-shadow: 0 15px 30px -8px rgba(74, 222, 128, 0.4); 
+        }
+        .hud-card:hover::before {
+             opacity: 1;
         }
 
-        /* Custom Inputs - Enhanced Focus Effect */
         .hud-input {
             background: rgba(2, 6, 23, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -110,11 +130,11 @@
         .hud-input:focus {
             outline: none;
             border-color: #4ade80; 
-            box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.4), 0 0 10px rgba(74, 222, 128, 0.6); /* Glow effect on focus */
+            box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.5), 0 0 12px rgba(74, 222, 128, 0.8);
         }
 
-        /* Scrollbar */
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; } /* Slightly wider scrollbar */
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #000814; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e3a8a; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
@@ -135,9 +155,13 @@
         const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
         // --- GLOBAL CONSTANTS & DATA ---
-        // Current logical time: Dec 16, 2025 at 11:30:56 PM +06.
+        const APP_VERSION = "8.0";
+        const AUTHOR_NAME = "Urfa Hasan Fattah";
+        const LOGICAL_CONTEXT_DATE = new Date(2025, 11, 17, 0, 4, 22); 
+        const LOCAL_STORAGE_KEY = "unipro_v8_data"; 
 
         const RAW_DATA = [
+            // Sample data (unchanged for consistency)
             { id: "du", name: "Dhaka University", type: "General", exams: [
                 {u: "A Unit", d: "20 December"}, {u: "B Unit", d: "13 December"}, {u: "C Unit", d: "6 December"}, {u: "D Unit", d: "29 Nov"}, {u: "IBA", d: "28 Nov"}
             ]},
@@ -175,13 +199,11 @@
 
         // --- ENGINE ---
 
-        // Helper function for consistent date formatting
         const formatDate = (date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         
-        // 1. Precise Date Parser (Robustness check added)
         const parseDate = (dStr) => {
             if (!dStr) return null;
-            let cleanStr = dStr.split('-')[0].trim(); // Take start date if range is given
+            let cleanStr = dStr.split('-')[0].trim(); 
             const parts = cleanStr.split(' ');
             if (parts.length < 2) return null;
 
@@ -190,20 +212,19 @@
             const monthStr = parts[1].slice(0, 3);
             const month = monthMap[monthStr];
             
-            // Logic: Current Time Dec 2025.
-            let year = 2025;
-            // If month is Jan-May (0-4), it's next year (2026). Otherwise 2025.
-            if (month < 5) year = 2026; 
+            const today = new Date();
+            let year = today.getFullYear();
+            if (month < 5 && today.getMonth() > 9) { // Target Jan-May, Current Oct-Dec -> assume next year
+                year++;
+            }
 
             const d = new Date(year, month, day);
-            // Ensure the date object is valid
             if (isNaN(d.getTime())) return null; 
 
-            d.setHours(10, 0, 0, 0); // Exams usually at 10 AM
+            d.setHours(10, 0, 0, 0); 
             return d;
         };
 
-        // 2. Time Calculator (Enhanced for high precision and status)
         const getTimeLeft = (target, now) => {
             const diff = target - now;
             if (diff <= 0) return { total: 0, d: 0, h: 0, m: 0, s: 0, status: "ENDED" };
@@ -211,12 +232,10 @@
             const totalHours = Math.floor(diff / (1000 * 60 * 60));
             
             if (totalHours < 24) return { 
-                total: diff,
-                d: 0, // Days is 0 if total hours < 24
-                h: totalHours, 
+                total: diff, d: 0, h: totalHours, 
                 m: Math.floor((diff / 1000 / 60) % 60),
                 s: Math.floor((diff / 1000) % 60),
-                status: "CRITICAL" // Changed from URGENT for clarity
+                status: "CRITICAL"
             };
 
             return { 
@@ -229,93 +248,388 @@
             };
         };
 
-        // 3. User Data Manager (Local Storage)
+        // ADVANCED: Refactored Data Structure
         const useUserData = () => {
             const [data, setData] = useState(() => {
-                const saved = localStorage.getItem("unipro_v5_data"); 
-                return saved ? JSON.parse(saved) : {};
+                const saved = localStorage.getItem(LOCAL_STORAGE_KEY); 
+                const initialData = saved ? JSON.parse(saved) : {};
+                
+                // Ensure every university entry has an admitCards array
+                Object.keys(initialData).forEach(key => {
+                    if (!initialData[key].admitCards) {
+                        initialData[key].admitCards = [];
+                    }
+                    // Data migration if old structure is found
+                    if (initialData[key].admitFileContent) {
+                         initialData[key].admitCards.push({
+                            id: Date.now(),
+                            unit: "Legacy Unit",
+                            name: initialData[key].admitName || "Admit Card",
+                            uploadedAt: initialData[key].admitUploadedAt,
+                            fileContent: initialData[key].admitFileContent
+                        });
+                        delete initialData[key].admitFileContent;
+                        delete initialData[key].admitName;
+                        delete initialData[key].admitUploadedAt;
+                    }
+                });
+
+                return initialData;
             });
 
             const updateData = (uniId, newData) => {
                 const updated = { ...data, [uniId]: { ...data[uniId], ...newData } };
                 setData(updated);
-                localStorage.setItem("unipro_v5_data", JSON.stringify(updated));
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
             };
 
-            return [data, updateData];
+            const addAdmitCard = (uniId, card) => {
+                const uniData = data[uniId] || {};
+                const newCard = { id: Date.now(), ...card };
+                const updatedCards = [...(uniData.admitCards || []), newCard];
+                
+                updateData(uniId, { admitCards: updatedCards, hasAdmit: updatedCards.length > 0 });
+            };
+
+            const removeAdmitCard = (uniId, cardId) => {
+                const uniData = data[uniId] || {};
+                const updatedCards = (uniData.admitCards || []).filter(card => card.id !== cardId);
+                
+                updateData(uniId, { admitCards: updatedCards, hasAdmit: updatedCards.length > 0 });
+            };
+
+            return [data, updateData, addAdmitCard, removeAdmitCard];
         };
 
-        // --- COMPONENTS ---
+        // --- UTILITY COMPONENTS ---
 
-        // Icon Component (Improved flexibility with size prop)
         const Icon = ({ name, size = "text-[20px]", className = "" }) => (
             <span className={`material-symbols-rounded select-none ${size} ${className}`}>{name}</span>
         );
 
-        // 4. Live Clock Component (Renders just the text to avoid re-rendering parents)
+        const InfoBar = ({ logicalDate, version }) => (
+            <div className="bg-surface/50 border-b border-white/5 py-2">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center text-xs text-gray-400 font-mono">
+                    <span>Zenith System V{version}</span>
+                    <span className="flex items-center gap-1">
+                        <Icon name="schedule" size="text-[14px]" /> Context Date: {formatDate(logicalDate)}
+                    </span>
+                </div>
+            </div>
+        );
+
         const LiveTicker = ({ targetDate, type = "full" }) => {
-            const [time, setTime] = useState(getTimeLeft(targetDate, new Date()));
+            const [now, setNow] = useState(new Date()); 
+            const [time, setTime] = useState(getTimeLeft(targetDate, now)); 
 
             useEffect(() => {
                 const timer = setInterval(() => {
-                    setTime(getTimeLeft(targetDate, new Date()));
+                    const newNow = new Date();
+                    setNow(newNow);
+                    setTime(getTimeLeft(targetDate, newNow));
                 }, 1000);
                 return () => clearInterval(timer);
             }, [targetDate]);
 
-            if (time.status === "ENDED") return <span className="text-gray-500 font-bold">EXAM CONCLUDED</span>;
+            if (time.status === "ENDED") return <span className="text-gray-500 font-bold text-xs sm:text-sm">EXAM CONCLUDED</span>;
 
             const isCritical = time.status === "CRITICAL";
             const colorClass = isCritical ? "text-danger" : time.d < 10 ? "text-warn" : "text-primary";
+            const animationClass = isCritical ? "animate-pulse-slow" : "animate-subtle-pulse";
 
             if (type === "compact") {
                 return (
-                    <span className={`font-mono font-bold tracking-tight ${colorClass} transition-colors duration-500`}>
+                    <span className={`font-mono font-bold tracking-tight text-sm ${colorClass} ${animationClass} transition-colors duration-500`}>
                         {isCritical ? `${String(time.h).padStart(2,'0')}h` : `${time.d}d`} <span className="text-gray-500">:</span> {String(time.m).padStart(2,'0')}m <span className="text-gray-500">:</span> {String(time.s).padStart(2,'0')}s
                     </span>
                 );
             }
 
-            // Full Type (Grid Layout)
-            // Dynamically show Days/Hours based on proximity
             const units = isCritical 
                 ? [['H', time.h], ['M', time.m], ['S', time.s]]
                 : [['D', time.d], ['H', time.h], ['M', time.m], ['S', time.s]];
 
             return (
-                <div className="flex gap-2 text-center transition-all duration-300">
+                <div className={`flex gap-1 sm:gap-2 text-center transition-all duration-300 ${animationClass}`}>
                     {units.map(([label, val]) => (
                         <div key={label} className="flex flex-col items-center">
-                            <div className="bg-bg border border-gray-700 rounded px-2 py-1 min-w-[36px] min-h-[30px] flex items-center justify-center transition-shadow">
-                                <span className={`font-mono font-bold text-sm ${colorClass}`}>{String(val).padStart(2,'0')}</span>
+                            <div className="bg-bg border border-gray-700 rounded px-1 sm:px-2 py-1 min-w-[30px] sm:min-w-[36px] min-h-[30px] flex items-center justify-center shadow-inner shadow-black/30">
+                                <span className={`font-mono font-bold text-xs sm:text-sm ${colorClass}`}>{String(val).padStart(2,'0')}</span>
                             </div>
-                            <span className="text-[10px] text-gray-500 uppercase mt-0.5">{label}</span>
+                            <span className="text-[8px] sm:text-[10px] text-gray-500 uppercase mt-0.5">{label}</span>
                         </div>
                     ))}
                 </div>
             );
         };
+        
+        // FIX: PDF Viewer Modal - Ensure proper Base64 Data URL usage
+        const PDFViewerModal = ({ admitName, fileContent, onClose }) => {
+            const pdfDataUrl = fileContent; 
 
-        // 5. Dual Priority Hero (Refined Design)
+            return (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/90 backdrop-blur-sm" onClick={onClose}></div>
+                    <div className="hud-panel w-full max-w-5xl h-full max-h-[95vh] rounded-xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300 shadow-2xl shadow-primary/40">
+                        
+                        <div className="p-4 border-b border-white/10 flex justify-between items-center bg-surface/90">
+                            <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
+                                <Icon name="picture_as_pdf" className="text-danger" />
+                                Viewing: <span className="font-mono text-primary text-sm break-all">{admitName}</span>
+                            </h2>
+                            <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition border border-white/10">
+                                <Icon name="close" size="text-[18px]" />
+                            </button>
+                        </div>
+
+                        <div className="flex-grow bg-gray-900">
+                            {/* Use iframe with the direct Data URL for high local compatibility */}
+                            <iframe 
+                                src={pdfDataUrl} 
+                                className="w-full h-full border-none"
+                                title={`PDF Viewer for ${admitName}`}
+                                type="application/pdf" 
+                                frameBorder="0"
+                            >
+                                <div className="p-8 text-center text-gray-400">
+                                    <Icon name="error" className="text-warn text-5xl mb-3" />
+                                    <p className="text-lg font-semibold">PDF Viewer Fallback</p>
+                                    <p>Your browser or device settings prevent inline PDF viewing from local storage (Base64). Please use the **Download** option to view the file externally.</p>
+                                </div>
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+
+        // ADVANCED: Desk Modal (Updated for Multi-Admit)
+        const DeskModal = ({ uni, userData, onUpdateData, addAdmitCard, removeAdmitCard, onClose }) => {
+            const fileInputRef = useRef(null);
+            const [isPdfViewerOpen, setIsPdfViewerOpen] = useState(false);
+            const [selectedCard, setSelectedCard] = useState(null);
+            const [selectedUnit, setSelectedUnit] = useState(uni.exams[0]?.u || "");
+            
+            const availableUnits = uni.exams.map(e => e.u);
+            const admitCards = userData?.admitCards || [];
+
+            const handleFileChange = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (file.type !== "application/pdf") {
+                    alert("⚠️ Attention: Only PDF files (.pdf) are supported.");
+                    e.target.value = null; 
+                    return;
+                }
+                if (!selectedUnit) {
+                    alert("Please select the Unit for this Admit Card first.");
+                    e.target.value = null; 
+                    return;
+                }
+                
+                // Check for duplicate unit upload
+                if (admitCards.some(card => card.unit === selectedUnit)) {
+                    if (!window.confirm(`An admit card for ${selectedUnit} already exists. Do you want to replace it?`)) {
+                        e.target.value = null;
+                        return;
+                    }
+                    removeAdmitCard(uni.id, admitCards.find(card => card.unit === selectedUnit).id);
+                }
+
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const newCard = {
+                        unit: selectedUnit,
+                        name: file.name, 
+                        uploadedAt: new Date().toISOString(),
+                        fileContent: event.target.result // Base64 content
+                    };
+                    addAdmitCard(uni.id, newCard);
+                    e.target.value = null; // Clear file input
+                    setSelectedUnit(uni.exams[0]?.u || ""); // Reset selection
+                };
+                reader.readAsDataURL(file);
+            };
+            
+            const handleDownload = (card) => {
+                if (!card.fileContent) return;
+
+                const link = document.createElement('a');
+                link.href = card.fileContent;
+                link.download = `${uni.id}_Admit_${card.unit.replace(/\s/g, '_')}_${card.name}`; 
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            const handleView = (card) => {
+                setSelectedCard(card);
+                setIsPdfViewerOpen(true);
+            };
+
+            const handleRemove = (cardId) => {
+                if (window.confirm("Are you sure you want to permanently delete this Admit Card file?")) {
+                     removeAdmitCard(uni.id, cardId);
+                }
+            };
+
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose}></div>
+                    <div className="hud-panel w-full max-w-4xl rounded-3xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300 shadow-2xl shadow-primary/30">
+                        
+                        {/* Header */}
+                        <div className="p-6 border-b border-white/10 flex justify-between items-center bg-surface/80">
+                            <div>
+                                <h2 className="text-2xl sm:text-3xl font-extrabold text-white flex items-center gap-3">
+                                    <Icon name="school" className="text-primary text-3xl" />
+                                    {uni.name} 
+                                    {admitCards.length > 0 && <span className="px-3 py-1 rounded-full text-[10px] bg-success/20 text-success border border-success/30 font-extrabold uppercase tracking-wider">{admitCards.length} ADMITS</span>}
+                                </h2>
+                                <p className="text-sm text-gray-400 font-mono mt-1">{uni.type} University</p>
+                            </div>
+                            <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition border border-white/10">
+                                <Icon name="close" />
+                            </button>
+                        </div>
+
+                        <div className="overflow-y-auto p-4 sm:p-8 space-y-10 custom-scrollbar">
+                            
+                            {/* Section 1: All Exam Timers */}
+                            <section className="bg-surface/50 p-4 sm:p-6 rounded-xl border border-white/10">
+                                <h3 className="text-xs font-bold text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <Icon name="alarm_on" size="text-[18px]" /> Exam Sequence Countdown
+                                </h3>
+                                <div className="grid gap-3">
+                                    {uni.exams.map((exam, idx) => {
+                                        const now = new Date(); 
+                                        const isPast = exam.dateObj < now;
+                                        const hasAdmitForUnit = admitCards.some(card => card.unit === exam.u);
+                                        
+                                        return (
+                                            <div key={idx} className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 rounded-lg border transition-all ${isPast ? 'bg-white/5 border-transparent opacity-60' : 'bg-bg/50 border-white/10 hover:bg-bg/70'}`}>
+                                                <div className="flex flex-col">
+                                                    <span className={`font-bold text-sm sm:text-base ${isPast ? 'text-gray-500' : 'text-gray-100'}`}>{exam.u}</span>
+                                                    <span className="text-xs text-gray-400 font-mono mt-1">{exam.d}</span>
+                                                </div>
+                                                <div className="flex items-center gap-4 mt-2 sm:mt-0">
+                                                    {hasAdmitForUnit && <Icon name="verified" className="text-success" title="Admit Uploaded" />}
+                                                    <LiveTicker targetDate={exam.dateObj} type="full" />
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </section>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                {/* Section 2: Admit Card Vault - Multi-Admit Display */}
+                                <section>
+                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <Icon name="verified_user" size="text-[16px]" /> Admit Card Vault
+                                    </h3>
+                                    
+                                    {/* Upload Controls */}
+                                    <div className="bg-surface/50 p-4 rounded-xl border border-white/10 mb-6">
+                                        <p className="text-xs font-bold text-primary mb-2">Upload New Admit Card</p>
+                                        <div className="flex gap-3">
+                                            <select 
+                                                className="hud-input flex-grow p-2 rounded-lg text-sm"
+                                                value={selectedUnit}
+                                                onChange={(e) => setSelectedUnit(e.target.value)}
+                                            >
+                                                <option value="" disabled>Select Unit...</option>
+                                                {availableUnits.map(unit => (
+                                                    <option key={unit} value={unit}>
+                                                        {unit}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <button 
+                                                onClick={() => fileInputRef.current?.click()}
+                                                disabled={!selectedUnit}
+                                                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${selectedUnit ? 'bg-primary text-bg hover:bg-green-400' : 'bg-gray-700 text-gray-400 cursor-not-allowed'}`}
+                                            >
+                                                <Icon name="upload" size="text-[18px]" /> Upload PDF
+                                            </button>
+                                        </div>
+                                        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept="application/pdf" className="hidden" />
+                                    </div>
+
+                                    {/* List of Uploaded Admits */}
+                                    <div className="space-y-3">
+                                        {admitCards.length === 0 ? (
+                                            <div className="border-2 border-dashed border-gray-700/50 p-6 rounded-xl text-center text-gray-500">
+                                                <Icon name="description" className="text-4xl mb-2" />
+                                                No Admit Cards uploaded yet.
+                                            </div>
+                                        ) : (
+                                            admitCards.map(card => (
+                                                <div key={card.id} className="hud-panel p-4 rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center border-l-4 border-success/50">
+                                                    <div className="flex flex-col mb-3 sm:mb-0">
+                                                        <span className="font-bold text-base text-white">{card.unit}</span>
+                                                        <span className="text-xs text-gray-400 font-mono break-all">{card.name}</span>
+                                                    </div>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        <button onClick={() => handleView(card)} className="px-2.5 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-xs font-medium hover:bg-primary/30 flex items-center gap-1">
+                                                            <Icon name="visibility" size="text-[14px]" /> View
+                                                        </button>
+                                                        <button onClick={() => handleDownload(card)} className="px-2.5 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full text-xs font-medium hover:bg-indigo-500/30 flex items-center gap-1">
+                                                            <Icon name="download" size="text-[14px]" /> Download
+                                                        </button>
+                                                        <button onClick={() => handleRemove(card.id)} className="px-2.5 py-1 bg-danger/10 border border-danger/30 text-danger rounded-full text-xs font-medium hover:bg-danger/20 flex items-center gap-1">
+                                                            <Icon name="delete" size="text-[14px]" /> Del
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </section>
+
+                                {/* Section 3: Notes */}
+                                <section className="flex flex-col h-full">
+                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <Icon name="edit_note" size="text-[16px]" /> Command Notes
+                                    </h3>
+                                    <textarea 
+                                        className="hud-input w-full flex-1 rounded-xl p-4 text-sm resize-none min-h-[180px] shadow-inner shadow-black/20"
+                                        placeholder="Write syllabus reminders, seat plan info, or strategies..."
+                                        value={userData?.notes || ""}
+                                        onChange={(e) => onUpdateData(uni.id, { notes: e.target.value })}
+                                    ></textarea>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                    {isPdfViewerOpen && selectedCard && (
+                        <PDFViewerModal 
+                            admitName={`${selectedCard.unit} Admit (${selectedCard.name})`}
+                            fileContent={selectedCard.fileContent}
+                            onClose={() => setIsPdfViewerOpen(false)}
+                        />
+                    )}
+                </div>
+            );
+        };
+
         const HeroSection = ({ topExams }) => {
             if (!topExams || topExams.length === 0) return null;
-
-            // Check proximity: Are the top 2 exams within 96 hours of each other?
-            const isDualThreat = topExams.length >= 2 && 
-                (topExams[1].date - topExams[0].date) < (96 * 60 * 60 * 1000);
+            const isDualThreat = topExams.length >= 2 && (topExams[1].date - topExams[0].date) < (96 * 60 * 60 * 1000);
 
             const PrimaryCard = ({ exam, label }) => (
                 <div className="hud-panel p-6 rounded-3xl relative overflow-hidden group border-l-4 border-primary/80 transition-all duration-500 hover:shadow-primary/30 hover:shadow-2xl">
                     <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-10 transition-opacity duration-700"></div>
-                    <div className="absolute top-[-50%] right-[-50%] w-64 h-64 border-4 border-primary/30 rounded-full opacity-50 animate-border-spin pointer-events-none"></div>
-
-                    <div className="flex justify-between items-start mb-5 relative z-10">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-5 relative z-10">
                         <div>
                             <span className="text-xs font-bold text-primary tracking-widest uppercase mb-1 block">{label}</span>
-                            <h2 className="text-3xl font-extrabold text-white leading-tight">{exam.uniName}</h2>
-                            <p className="text-lg text-gray-400 font-medium">{exam.unit}</p>
+                            <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">{exam.uniName}</h2>
+                            <p className="text-base sm:text-lg text-gray-400 font-medium">{exam.unit}</p>
                         </div>
-                        <div className="text-right text-sm text-gray-400 font-mono bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                        <div className="text-right text-xs sm:text-sm text-gray-400 font-mono bg-white/5 px-3 py-1.5 rounded-full border border-white/10 mt-3 sm:mt-0">
                             {formatDate(exam.date)}
                         </div>
                     </div>
@@ -345,20 +659,18 @@
                 </div>
             );
         };
-
-        // 6. Today's Exam Banner
+        
         const TodayBanner = ({ todayExams, now }) => {
             if (todayExams.length === 0) return null;
-
             const examString = todayExams.map(e => `${e.uniName} (${e.unit})`).join(', ');
 
             return (
-                <div className="hud-panel mb-8 p-5 rounded-2xl border-l-4 border-warn bg-warn/10 animate-in fade-in duration-500 shadow-xl shadow-warn/5">
-                    <div className="flex items-start gap-4">
-                        <Icon name="event_upcoming" className="text-warn text-3xl mt-1 flex-shrink-0 animate-pulse-slow" />
+                <div className="hud-panel mb-8 p-4 sm:p-5 rounded-2xl border-l-4 border-warn bg-warn/10 animate-in fade-in duration-500 shadow-xl shadow-warn/5">
+                    <div className="flex items-start gap-3 sm:gap-4">
+                        <Icon name="event_upcoming" className="text-warn text-2xl sm:text-3xl mt-1 flex-shrink-0 animate-pulse-slow" />
                         <div>
-                            <h3 className="text-lg font-bold text-warn">Live Deployment!</h3>
-                            <p className="text-sm text-gray-300">
+                            <h3 className="text-base sm:text-lg font-bold text-warn">Live Deployment!</h3>
+                            <p className="text-xs sm:text-sm text-gray-300">
                                 Exam{todayExams.length > 1 ? 's are' : ' is'} happening today, {formatDate(now)}: 
                                 <span className="font-extrabold text-white block mt-1">{examString}</span>
                             </p>
@@ -368,157 +680,90 @@
             );
         };
 
-        // 7. Detailed Modal (The "Desk" View) - Flexible and polished
-        const DeskModal = ({ uni, userData, onUpdateData, onClose }) => {
-            const fileInputRef = useRef(null);
-            
-            const handleFileChange = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    onUpdateData(uni.id, { hasAdmit: true, admitName: file.name, admitUploadedAt: new Date().toISOString() });
-                }
-            };
-
-            const clearAdmit = () => {
-                onUpdateData(uni.id, { hasAdmit: false, admitName: "", admitUploadedAt: "" });
-            };
+        const Footer = () => {
+            const socialLinks = [
+                { name: "Facebook", icon: "share", url: "#", color: "text-blue-500" },
+                { name: "Instagram", icon: "photo_camera", url: "#", color: "text-pink-500" },
+                { name: "Telegram", icon: "send", url: "#", color: "text-blue-400" },
+                { name: "WhatsApp", icon: "sms", url: "#", color: "text-green-500" },
+                { name: "Portfolio", icon: "public", url: "#", color: "text-primary" },
+            ];
 
             return (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose}></div>
-                    <div className="hud-panel w-full max-w-4xl rounded-3xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300 shadow-2xl shadow-primary/30">
-                        
-                        {/* Header */}
-                        <div className="p-6 border-b border-white/10 flex justify-between items-center bg-surface/80">
-                            <div>
-                                <h2 className="text-3xl font-extrabold text-white flex items-center gap-3">
-                                    <Icon name="school" className="text-primary text-3xl" />
-                                    {uni.name} 
-                                    {userData?.hasAdmit && <span className="px-3 py-1 rounded-full text-[10px] bg-success/20 text-success border border-success/30 font-extrabold uppercase tracking-wider">ADMIT READY</span>}
-                                </h2>
-                                <p className="text-sm text-gray-400 font-mono mt-1">{uni.type} University</p>
-                            </div>
-                            <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition border border-white/10">
-                                <Icon name="close" />
-                            </button>
-                        </div>
-
-                        <div className="overflow-y-auto p-8 space-y-10 custom-scrollbar">
+                <footer className="mt-20 border-t border-white/5 bg-surface/50 p-6 sm:p-8">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-8">
                             
-                            {/* Section 1: All Exam Timers */}
-                            <section className="bg-surface/50 p-6 rounded-xl border border-white/10">
-                                <h3 className="text-xs font-bold text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <Icon name="alarm_on" size="text-[18px]" /> Exam Sequence Countdown
-                                </h3>
-                                <div className="grid gap-4">
-                                    {uni.exams.map((exam, idx) => {
-                                        const isPast = exam.dateObj < new Date(new Date().setHours(0,0,0,0));
-                                        const timeLeft = getTimeLeft(exam.dateObj, new Date());
-                                        const isCritical = timeLeft.status === "CRITICAL";
+                            <div className="text-center md:text-left">
+                                <p className="text-sm font-bold text-primary mb-1">Developed & Designed by</p>
+                                <h3 className="text-xl font-extrabold text-white">{AUTHOR_NAME}</h3>
+                                <p className="text-xs text-gray-500 mt-2">© 2025 UniPro Zenith Command. All rights reserved.</p>
+                            </div>
 
-                                        return (
-                                            <div key={idx} className={`flex items-center justify-between p-4 rounded-lg border transition-all ${isPast ? 'bg-white/5 border-transparent opacity-60' : isCritical ? 'bg-danger/10 border-danger/30 shadow-lg shadow-danger/10' : 'bg-bg/50 border-white/10 hover:bg-bg/70'}`}>
-                                                <div className="flex flex-col">
-                                                    <span className={`font-bold ${isPast ? 'text-gray-500' : 'text-gray-100'}`}>{exam.u}</span>
-                                                    <span className="text-xs text-gray-400 font-mono mt-1">{exam.d}</span>
-                                                </div>
-                                                <LiveTicker targetDate={exam.dateObj} type="full" />
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            </section>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                {/* Section 2: Admit Card Vault */}
-                                <section>
-                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                        <Icon name="verified_user" size="text-[16px]" /> Admit Card Vault
-                                    </h3>
-                                    <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-all min-h-[180px] flex flex-col justify-center ${userData?.hasAdmit ? 'border-success/50 bg-success/5' : 'border-gray-700 bg-surface/50 hover:border-primary/50'}`}>
-                                        {userData?.hasAdmit ? (
-                                            <div className="flex flex-col items-center gap-3">
-                                                <Icon name="file_present" className="text-success text-5xl" />
-                                                <p className="text-sm font-bold text-white break-all">{userData.admitName}</p>
-                                                <p className="text-[10px] text-gray-500">Uploaded: {new Date(userData.admitUploadedAt).toLocaleDateString()}</p>
-                                                <div className="flex gap-3 mt-3">
-                                                    <a href="#" target="_blank" className="px-4 py-2 bg-primary/20 text-primary border border-primary/30 rounded-full text-xs font-medium hover:bg-primary/30 flex items-center gap-1">
-                                                        <Icon name="visibility" size="text-[14px]" /> View File
-                                                    </a>
-                                                    <button onClick={clearAdmit} className="px-4 py-2 bg-danger/10 border border-danger/30 text-danger rounded-full text-xs font-medium hover:bg-danger/20 flex items-center gap-1">
-                                                        <Icon name="delete" size="text-[14px]" /> Remove
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div onClick={() => fileInputRef.current?.click()} className="cursor-pointer">
-                                                <Icon name="cloud_upload" className="text-primary/70 text-4xl mb-2" />
-                                                <p className="text-sm text-primary/80 font-semibold">Click to upload Admit PDF/Image</p>
-                                                <p className="text-xs text-gray-500 mt-1">Simulated local file storage</p>
-                                            </div>
-                                        )}
-                                        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".pdf,.jpg,.png" className="hidden" />
-                                    </div>
-                                </section>
-
-                                {/* Section 3: Notes */}
-                                <section className="flex flex-col h-full">
-                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
-                                        <Icon name="edit_note" size="text-[16px]" /> Command Notes
-                                    </h3>
-                                    <textarea 
-                                        className="hud-input w-full flex-1 rounded-xl p-4 text-sm resize-none min-h-[180px] shadow-inner shadow-black/20"
-                                        placeholder="Write syllabus reminders, seat plan info, or strategies..."
-                                        value={userData?.notes || ""}
-                                        onChange={(e) => onUpdateData(uni.id, { notes: e.target.value })}
-                                    ></textarea>
-                                </section>
+                            <div className="flex space-x-4 sm:space-x-6">
+                                {socialLinks.map(link => (
+                                    <a 
+                                        key={link.name}
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={`flex flex-col items-center gap-1 transition-transform duration-200 hover:scale-110`}
+                                        title={link.name}
+                                    >
+                                        <div className={`p-2 sm:p-3 rounded-full bg-bg/50 border border-white/10 ${link.color}`}>
+                                            <Icon name={link.icon} size="text-[18px] sm:text-[20px]" />
+                                        </div>
+                                        <span className="text-[10px] text-gray-400 font-mono hidden sm:block">{link.name}</span>
+                                    </a>
+                                ))}
                             </div>
                         </div>
                     </div>
-                </div>
+                </footer>
             );
         };
 
-        // 8. Main Dashboard
+
+        // Main Dashboard
         const App = () => {
             const [filter, setFilter] = useState("All");
             const [search, setSearch] = useState("");
-            const [userData, setUserData] = useUserData();
+            // ADVANCED: Destructure new functions from hook
+            const [userData, updateUserData, addAdmitCard, removeAdmitCard] = useUserData();
             const [modalUni, setModalUni] = useState(null);
-            
-            const now = useMemo(() => new Date(), []);
+            const [now, setNow] = useState(new Date()); 
 
-            // Process Data
+            // Use a second useEffect to update 'now' every second for the `useMemo` dependency
+            useEffect(() => {
+                const clock = setInterval(() => {
+                    setNow(new Date()); 
+                }, 1000);
+                return () => clearInterval(clock);
+            }, []);
+
             const processedData = useMemo(() => {
                 return RAW_DATA.map(uni => {
-                    // Parse Dates
                     const validExams = uni.exams
                         .map(e => ({ ...e, dateObj: parseDate(e.d) }))
                         .filter(e => e.dateObj)
                         .sort((a,b) => a.dateObj - b.dateObj);
 
-                    // Find the next exam strictly after 'now'
                     const nextExam = validExams.find(e => e.dateObj > now);
                     
                     return {
                         ...uni,
                         exams: validExams,
                         nextExam,
-                        // Helper for sorting: put concluded exams at the end
-                        nextDate: nextExam ? nextExam.dateObj : new Date(9999, 0, 1) 
+                        nextDate: nextExam ? nextExam.dateObj : new Date(2100, 0, 1) 
                     };
                 });
-            }, [now]);
+            }, [now]); 
 
-            // Dynamically generate filter list based on available data
             const availableTypes = useMemo(() => {
                 const types = new Set(RAW_DATA.map(d => d.type));
                 return ['All', 'Pinned', ...Array.from(types).sort()];
             }, []);
 
-
-            // Global Exam List for Hero
             const topUpcomingExams = useMemo(() => {
                 const allExams = [];
                 processedData.forEach(uni => {
@@ -536,16 +781,15 @@
                 return allExams.sort((a, b) => a.date - b.date).slice(0, 2);
             }, [processedData, now]);
 
-            // Today's Exams
             const todayExams = useMemo(() => {
                 const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-                const todayEnd = new Date(todayStart.getTime() + (24 * 60 * 60 * 1000));
                 
                 const exams = [];
                 processedData.forEach(uni => {
                     uni.exams.forEach(ex => {
-                        // Check if the exam date falls within today (inclusive start, exclusive end)
-                        if (ex.dateObj >= todayStart && ex.dateObj < todayEnd) {
+                        if (ex.dateObj.getFullYear() === todayStart.getFullYear() &&
+                            ex.dateObj.getMonth() === todayStart.getMonth() &&
+                            ex.dateObj.getDate() === todayStart.getDate()) {
                             exams.push({ uniName: uni.name, unit: ex.u });
                         }
                     });
@@ -553,7 +797,6 @@
                 return exams;
             }, [processedData, now]);
 
-            // Filtering & Sorting for Grid
             const gridData = processedData
                 .filter(uni => {
                     const matchesFilter = filter === "All" || uni.type === filter;
@@ -562,36 +805,36 @@
                     return matchesFilter && matchesSearch;
                 })
                 .sort((a, b) => {
-                    // 1. Pinned first
                     const aPin = userData[a.id]?.isPinned ? 1 : 0;
                     const bPin = userData[b.id]?.isPinned ? 1 : 0;
                     if (aPin !== bPin) return bPin - aPin;
-                    // 2. Then by next date (earliest first)
                     return a.nextDate - b.nextDate;
                 });
 
             const togglePin = (id) => {
                 const current = userData[id]?.isPinned;
-                setUserData(id, { isPinned: !current });
+                updateUserData(id, { isPinned: !current });
             };
 
+
             return (
-                <div className="min-h-screen pb-20 relative">
+                <div className="min-h-screen relative flex flex-col">
                     
-                    {/* Navigation */}
-                    <nav className="sticky top-0 z-40 border-b border-white/5 bg-bg/80 backdrop-blur-xl shadow-lg shadow-black/30">
-                        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-green-500 flex items-center justify-center font-extrabold text-xl text-bg">Z</div>
-                                <span className="font-extrabold text-2xl tracking-tighter text-white">UniPro <span className="text-primary font-bold">Zenith</span></span>
-                                <span className="hidden sm:inline text-xs ml-3 bg-white/5 text-gray-400 px-2 py-1 rounded-full font-mono">V5.1</span>
+                    <InfoBar logicalDate={LOGICAL_CONTEXT_DATE} version={APP_VERSION} />
+
+                    <nav className="sticky top-[34px] z-40 border-b border-white/5 bg-bg/80 backdrop-blur-xl shadow-lg shadow-black/30">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex justify-between items-center">
+                            <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-primary to-green-500 flex items-center justify-center font-extrabold text-lg sm:text-xl text-bg">Z</div>
+                                <span className="font-extrabold text-xl sm:text-2xl tracking-tighter text-white">UniPro <span className="text-primary font-bold">Zenith</span></span>
+                                <span className="hidden lg:inline text-xs ml-3 bg-white/5 text-gray-400 px-2 py-1 rounded-full font-mono">V{APP_VERSION}</span>
                             </div>
-                            <div className="flex items-center hud-input rounded-full px-5 py-2 w-full md:w-72 border-none">
-                                <Icon name="search" size="text-[18px]" className="text-gray-500 mr-3" />
+                            <div className="flex items-center hud-input rounded-full px-3 sm:px-5 py-1.5 sm:py-2 w-1/2 max-w-xs md:w-72 border-none">
+                                <Icon name="search" size="text-[16px] sm:text-[18px]" className="text-gray-500 mr-2 sm:mr-3" />
                                 <input 
                                     type="text" 
-                                    placeholder="Search Uni or Type..." 
-                                    className="bg-transparent border-none outline-none text-sm w-full placeholder-gray-500"
+                                    placeholder="Search Uni..." 
+                                    className="bg-transparent border-none outline-none text-xs sm:text-sm w-full placeholder-gray-500"
                                     value={search}
                                     onChange={(e) => setSearch(e.target.value)}
                                 />
@@ -599,22 +842,18 @@
                         </div>
                     </nav>
 
-                    <div className="max-w-7xl mx-auto px-6 pt-10">
+                    <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 flex-grow w-full">
                         
-                        {/* 0. Today's Exams Banner */}
                         {!search && filter === "All" && <TodayBanner todayExams={todayExams} now={now} />}
-
-                        {/* 1. HUD Hero */}
                         {!search && filter === "All" && <HeroSection topExams={topUpcomingExams} />}
 
-                        {/* 2. Controls (Dynamically generated filters) */}
                         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-                            <div className="flex overflow-x-auto gap-3 pb-2 md:pb-0 w-full md:w-auto no-scrollbar">
+                            <div className="flex overflow-x-auto gap-3 pb-2 md:pb-0 w-full no-scrollbar">
                                 {availableTypes.map(f => (
                                     <button 
                                         key={f}
                                         onClick={() => setFilter(f)}
-                                        className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap border ${filter === f ? 'bg-primary/20 border-primary text-primary shadow-[0_0_15px_rgba(74,222,128,0.2)]' : 'bg-surface border-white/5 text-gray-400 hover:text-white hover:bg-surface/80'}`}
+                                        className={`px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-medium transition-all whitespace-nowrap border ${filter === f ? 'bg-primary/20 border-primary text-primary shadow-[0_0_15px_rgba(74,222,128,0.2)]' : 'bg-surface border-white/5 text-gray-400 hover:text-white hover:bg-surface/80'}`}
                                     >
                                         {f}
                                     </button>
@@ -622,49 +861,47 @@
                             </div>
                         </div>
 
-                        {/* 3. The Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                             {gridData.map(uni => {
                                 const uData = userData[uni.id] || {};
                                 const isPinned = uData.isPinned;
-                                const hasAdmit = uData.hasAdmit;
+                                const hasAdmit = uData.admitCards && uData.admitCards.length > 0;
 
                                 return (
                                     <div 
                                         key={uni.id} 
                                         onClick={() => setModalUni(uni)}
-                                        className="hud-card rounded-2xl p-6 cursor-pointer group flex flex-col justify-between min-h-[200px]"
+                                        className="hud-card rounded-xl sm:rounded-2xl p-4 sm:p-6 cursor-pointer group flex flex-col justify-between min-h-[180px] sm:min-h-[200px] animate-in fade-in duration-500"
                                     >
-                                        {/* Scan Effect on Hover */}
                                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover:animate-scan pointer-events-none"></div>
 
-                                        <div className="flex justify-between items-start mb-5">
-                                            <div className="flex items-start gap-3">
-                                                <div className={`w-11 h-11 rounded-lg flex items-center justify-center font-bold text-xl border ${hasAdmit ? 'text-success border-success/30 bg-success/10 shadow-[0_0_12px_rgba(16,185,129,0.1)]' : 'text-primary border-primary/30 bg-primary/10'}`}>
+                                        <div className="flex justify-between items-start mb-4 sm:mb-5">
+                                            <div className="flex items-start gap-2 sm:gap-3">
+                                                <div className={`w-9 h-9 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center font-bold text-lg sm:text-xl border ${hasAdmit ? 'text-success border-success/30 bg-success/10 shadow-[0_0_12px_rgba(16,185,129,0.1)]' : 'text-primary border-primary/30 bg-primary/10'}`}>
                                                     {uni.name.charAt(0)}
                                                 </div>
                                                 <div className="pt-0.5">
-                                                    <h3 className="font-bold text-gray-100 group-hover:text-primary transition-colors text-lg leading-tight">{uni.name}</h3>
-                                                    <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                                                    <h3 className="font-bold text-gray-100 group-hover:text-primary transition-colors text-base sm:text-lg leading-tight">{uni.name}</h3>
+                                                    <div className="flex items-center gap-1 sm:gap-2 text-xs text-gray-500 mt-1">
                                                         <span>{uni.type}</span>
-                                                        {hasAdmit && <span className="text-success flex items-center gap-0.5 font-medium"><Icon name="check_circle" size="text-[14px]" /> Admit Ready</span>}
+                                                        {hasAdmit && <span className="text-success flex items-center gap-0.5 font-medium"><Icon name="check_circle" size="text-[12px] sm:text-[14px]" /> {uData.admitCards.length} Admits</span>}
                                                     </div>
                                                 </div>
                                             </div>
                                             <button 
                                                 onClick={(e) => { e.stopPropagation(); togglePin(uni.id); }}
-                                                className={`transition-colors p-2 -mr-2 -mt-2 rounded-full ${isPinned ? 'text-primary hover:text-white bg-primary/20' : 'text-gray-600 hover:text-white hover:bg-white/10'}`}
+                                                className={`transition-colors p-1 sm:p-2 -mr-1 sm:-mr-2 -mt-1 sm:-mt-2 rounded-full ${isPinned ? 'text-primary hover:text-white bg-primary/20' : 'text-gray-600 hover:text-white hover:bg-white/10'}`}
                                             >
-                                                <Icon name={isPinned ? "keep" : "push_pin"} />
+                                                <Icon name={isPinned ? "keep" : "push_pin"} size="text-[18px]" />
                                             </button>
                                         </div>
 
                                         <div className="mt-auto">
                                             {uni.nextExam ? (
-                                                <div className="bg-bg/60 rounded-lg p-3 border border-white/5 shadow-inner shadow-black/20">
-                                                    <div className="flex justify-between items-end mb-2">
+                                                <div className="bg-bg/60 rounded-lg p-2 sm:p-3 border border-white/5 shadow-inner shadow-black/20">
+                                                    <div className="flex justify-between items-end mb-1 sm:mb-2">
                                                         <span className="text-xs text-gray-400 font-medium">Next Exam: <span className="font-bold text-white">{uni.nextExam.u}</span></span>
-                                                        <span className="text-[10px] text-gray-600 font-mono">{uni.nextExam.d}</span>
+                                                        <span className="text-[10px] text-gray-600 font-mono">{formatDate(uni.nextExam.dateObj)}</span>
                                                     </div>
                                                     <LiveTicker targetDate={uni.nextExam.dateObj} type="compact" />
                                                 </div>
@@ -675,7 +912,6 @@
                                             )}
                                         </div>
                                         
-                                        {/* Notes Indicator */}
                                         {uData.notes && (
                                             <div title="Notes Available" className="absolute top-2 left-2 w-2 h-2 bg-warn rounded-full border border-bg"></div>
                                         )}
@@ -684,22 +920,26 @@
                             })}
                         </div>
                         {gridData.length === 0 && (
-                             <div className="text-center p-20 text-gray-500 text-lg border-2 border-dashed border-gray-700/50 rounded-2xl mt-10">
-                                <Icon name="inbox_customize" className="text-5xl mb-3" />
+                             <div className="text-center p-10 sm:p-20 text-gray-500 text-base sm:text-lg border-2 border-dashed border-gray-700/50 rounded-2xl mt-10">
+                                <Icon name="inbox_customize" className="text-4xl sm:text-5xl mb-3" />
                                 <p>No universities match the current filters or search query.</p>
                                 <p className="text-sm mt-1">Try changing the filter or clearing the search.</p>
                             </div>
                         )}
-                    </div>
+                    </main>
 
                     {modalUni && (
                         <DeskModal 
                             uni={modalUni} 
                             userData={userData[modalUni.id]} 
-                            onUpdateData={setUserData} 
+                            onUpdateData={updateUserData} 
+                            addAdmitCard={addAdmitCard}
+                            removeAdmitCard={removeAdmitCard}
                             onClose={() => setModalUni(null)} 
                         />
                     )}
+                    
+                    <Footer />
 
                 </div>
             );
