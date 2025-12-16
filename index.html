@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UniPro: Zenith Blue Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>UniPro: Zenith Command (v5.1: Chronos Pro)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -22,443 +23,684 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            200: '#bae6fd',
-                            300: '#7dd3fc',
-                            400: '#38bdf8',
-                            500: '#0ea5e9',
-                            600: '#0284c7',
-                            700: '#0369a1',
-                            800: '#075985',
-                            900: '#0c4a6e',
+                        bg: '#000814', // Deeper Blue-Black
+                        surface: '#071833', // Darker Blue-Surface
+                        primary: '#4ade80', // Modern Green Accent
+                        accent: '#475569', // Slate
+                        success: '#10b981', // Emerald
+                        danger: '#f87171', // Red
+                        warn: '#fcd34d', // Amber
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'scan': 'scan 4s linear infinite',
+                        'mesh-pan': 'mesh-pan 60s linear infinite',
+                        'border-spin': 'border-spin 3s linear infinite',
+                    },
+                    keyframes: {
+                        scan: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' }
                         },
-                        surface: '#ffffff',
+                        'mesh-pan': {
+                            '0%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                            '100%': { backgroundPosition: '0% 50%' }
+                        },
+                        'border-spin': {
+                            '0%': { transform: 'rotate(0deg)' },
+                            '100%': { transform: 'rotate(360deg)' }
+                        }
                     }
                 }
             }
         }
     </script>
-
     <style>
-        /* Modern Light Blue Gradient Background */
-        body {
-            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #e0e7ff 100%);
-            background-attachment: fixed;
-            color: #0c4a6e;
-            min-height: 100vh;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+        body { 
+            background-color: #000814; 
+            color: #e2e8f0; 
+            overflow-x: hidden; 
+            /* Added smooth scrolling for improved UX */
+            scroll-behavior: smooth;
+        }
+        
+        /* Awesome Mesh Blue Gradient Background */
+        .mesh-gradient-bg {
+            background: linear-gradient(-45deg, #071833, #020617, #071833, #1e3a8a);
+            background-size: 400% 400%;
+            animation: mesh-pan 60s ease infinite;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            opacity: 0.8;
         }
 
-        /* Glassmorphism UI Elements */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 8px 32px rgba(14, 165, 233, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* HUD Glass Effect */
+        .hud-panel {
+            background: rgba(7, 24, 51, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 30px -10px rgba(0, 0, 0, 0.6);
+            transition: all 0.3s ease; /* Added transition for smoothness */
+        }
+        
+        .hud-card {
+            background: linear-gradient(180deg, rgba(7, 24, 51, 0.6) 0%, rgba(7, 24, 51, 0.9) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; /* Needed for pseudo-elements */
+        }
+        .hud-card:hover {
+            border-color: rgba(74, 222, 128, 0.4);
+            transform: translateY(-4px); /* Increased lift */
+            box-shadow: 0 12px 25px -5px rgba(74, 222, 128, 0.2); /* Enhanced shadow */
         }
 
-        .glass-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(14, 165, 233, 0.15);
-            background: rgba(255, 255, 255, 0.85);
+        /* Custom Inputs - Enhanced Focus Effect */
+        .hud-input {
+            background: rgba(2, 6, 23, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+            transition: all 0.2s ease;
+        }
+        .hud-input:focus {
+            outline: none;
+            border-color: #4ade80; 
+            box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.4), 0 0 10px rgba(74, 222, 128, 0.6); /* Glow effect on focus */
         }
 
-        .hero-gradient {
-            background: linear-gradient(90deg, #0ea5e9 0%, #6366f1 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #bae6fd; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
-
-        .shimmer {
-            background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
-            background-size: 200% 100%;
-            animation: shimmer 2s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400; }
+        /* Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; } /* Slightly wider scrollbar */
+        .custom-scrollbar::-webkit-scrollbar-track { background: #000814; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e3a8a; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+        
+        .material-symbols-rounded { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     </style>
 </head>
 <body>
+    <div class="mesh-gradient-bg"></div>
+    <div class="fixed top-0 left-0 w-full h-full z-[-1] overflow-hidden">
+        <div class="glow-point top-[-15%] left-[-15%] opacity-70"></div>
+        <div class="glow-point bottom-[-15%] right-[-15%] bg-indigo-500/10 opacity-70"></div>
+    </div>
+    
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useMemo, useRef } = React;
+        const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
-        /**
-         * UPDATED DATASET FROM IMAGE
-         * Dates are parsed for 2025/2026 based on the provided chart.
-         */
-        const UNI_DATA = [
+        // --- GLOBAL CONSTANTS & DATA ---
+        // Current logical time: Dec 16, 2025 at 11:30:56 PM +06.
+
+        const RAW_DATA = [
             { id: "du", name: "Dhaka University", type: "General", exams: [
-                {u: "A Unit", d: "20 December"}, {u: "B Unit", d: "13 December"}, {u: "C Unit", d: "6 December"}, {u: "D Unit", d: "29 November"}, {u: "IBA", d: "28 November"}
+                {u: "A Unit", d: "20 December"}, {u: "B Unit", d: "13 December"}, {u: "C Unit", d: "6 December"}, {u: "D Unit", d: "29 Nov"}, {u: "IBA", d: "28 Nov"}
             ]},
-            { id: "mist", name: "MIST", type: "Engineering", exams: [{u: "Admission Test", d: "27 December"}]},
-            { id: "med", name: "Medical & Dental", type: "Medical", exams: [{u: "Admission Test", d: "12 December"}]},
-            { id: "ku", name: "Khulna University", type: "General", exams: [{u: "A,B Unit", d: "19 December"}, {u: "C,D Unit", d: "18 December"}]},
-            { id: "buet", name: "BUET", type: "Engineering", exams: [{u: "Admission Test", d: "10 January"}]},
-            { id: "agri", name: "Agri GST", type: "Agriculture", exams: [{u: "Admission Test", d: "3 January"}]},
-            { id: "maritime", name: "Maritime University", type: "Specialized", exams: [
-                {u: "FEOS", d: "31 January"}, {u: "FET", d: "31 January"}, {u: "FSA", d: "30 January"}, {u: "FMGP", d: "30 January"}
+            { id: "mist", name: "MIST", type: "Engineering", exams: [ {u: "All Units", d: "27 December"} ]},
+            { id: "med", name: "Medical & Dental", type: "Medical", exams: [ {u: "MBBS", d: "12 December"} ]},
+            { id: "ku", name: "Khulna University", type: "General", exams: [ {u: "A/B Unit", d: "19 December"}, {u: "C/D Unit", d: "18 December"} ]},
+            { id: "buet", name: "BUET", type: "Engineering", exams: [ {u: "Written", d: "10 January"} ]},
+            { id: "agri", name: "Agri GST", type: "Agri", exams: [ {u: "Combined", d: "3 January"} ]},
+            { id: "bsmrmu", name: "Maritime Uni", type: "Specialized", exams: [ {u: "FBS", d: "31 January"}, {u: "FET", d: "01 February"}, {u: "RDSS/RMPS", d: "29 January"} ]},
+            { id: "ru", name: "Rajshahi Uni", type: "General", exams: [
+                {u: "C Unit", d: "19 January"}, {u: "A Unit", d: "17 January"}, {u: "B Unit", d: "24 January"}
             ]},
-            { id: "bup", name: "BUP", type: "General", exams: [
-                {u: "FST/FOE", d: "17 January"}, {u: "FBS", d: "9 January"}, {u: "FSSS", d: "17 January"}, {u: "FASS", d: "10 January"}
+            { id: "hstu", name: "HSTU", type: "Agri", exams: [ {u: "All Units", d: "29 January"} ]}, 
+            { id: "butex", name: "BUTEX", type: "Engineering", exams: [ {u: "Written", d: "9 January"} ]},
+            { id: "aeron", name: "Aerospace and Aviation", type: "Specialized", exams: [ {u: "All Units", d: "25 December"} ]},
+            { id: "nu", name: "National University", type: "General", exams: [ {u: "All Units", d: "5 December"} ]},
+            { id: "jnu", name: "Jagannath Uni", type: "General", exams: [
+                {u: "A Unit", d: "26 December"}, {u: "B Unit", d: "28 December"}, {u: "C Unit", d: "27 December"}, {u: "D Unit", d: "9 January"}, {u: "E Unit", d: "6 Dec"}
             ]},
-            { id: "ru", name: "Rajshahi University", type: "General", exams: [{u: "C Unit", d: "15 January"}, {u: "A Unit", d: "17 January"}, {u: "B Unit", d: "24 January"}]},
-            { id: "hstu", name: "HSTU", type: "Agriculture", exams: [{u: "Admission Test", d: "26 January"}]},
-            { id: "butex", name: "BUTEX", type: "Engineering", exams: [{u: "Written", d: "9 January"}]},
-            { id: "aero", name: "Aerospace & Aviation", type: "Specialized", exams: [{u: "Admission Test", d: "26 December"}]},
-            { id: "nu", name: "National University", type: "General", exams: [{u: "N/A", d: "1 January"}]},
-            { id: "jnu", name: "Jagannath University", type: "General", exams: [
-                {u: "A Unit", d: "26 December"}, {u: "B Unit", d: "30 January"}, {u: "C Unit", d: "27 December"}, {u: "D Unit", d: "9 January"}, {u: "E Unit", d: "13 December"}
+            { id: "ju", name: "Jahangirnagar Uni", type: "General", exams: [ {u: "All Units", d: "21 December"} ]}, 
+            { id: "cou", name: "Comilla Uni", type: "General", exams: [ {u: "A Unit", d: "30 January"}, {u: "B Unit", d: "31 January"} ]},
+            { id: "cu", name: "Chittagong Uni", type: "General", exams: [
+                {u: "A Unit", d: "2 January"}, {u: "B Unit", d: "10 January"}, {u: "C Unit", d: "9 January"}, {u: "D1 Unit", d: "8 January"}, {u: "D2", d: "5 January"}
             ]},
-            { id: "ju", name: "Jahangirnagar University", type: "General", exams: [{u: "Admission Test", d: "21 December"}]},
-            { id: "cou", name: "Comilla University", type: "General", exams: [{u: "A Unit", d: "30 January"}, {u: "B Unit", d: "31 January"}, {u: "C Unit", d: "31 January"}]},
-            { id: "cu", name: "Chittagong University", type: "General", exams: [
-                {u: "A Unit", d: "2 January"}, {u: "B Unit", d: "10 January"}, {u: "C Unit", d: "9 January"}, {u: "D Unit", d: "3 January"}, {u: "B1 Unit", d: "7 January"}, {u: "D2 Unit", d: "8 January"}
-            ]},
-            { id: "ruet", name: "RUET", type: "Engineering", exams: [{u: "Admission Test", d: "22 January"}]},
-            { id: "kuet", name: "KUET", type: "Engineering", exams: [{u: "Admission Test", d: "15 January"}]},
-            { id: "sust", name: "SUST", type: "General", exams: [{u: "A Unit", d: "13 January"}, {u: "B Unit", d: "14 January"}]},
+            { id: "ruet", name: "RUET", type: "Engineering", exams: [ {u: "All Units", d: "22 January"} ]},
+            { id: "kuet", name: "KUET", type: "Engineering", exams: [ {u: "All Units", d: "15 January"} ]},
+            { id: "iut", name: "IUT", type: "Engineering", exams: [ {u: "A Unit", d: "13 January"}, {u: "B Unit", d: "14 January"} ]},
             { id: "gst", name: "GST Cluster", type: "General", exams: [
                 {u: "A Unit", d: "10 April"}, {u: "B Unit", d: "3 April"}, {u: "C Unit", d: "27 March"}
             ]},
-            { id: "cuet", name: "CUET", type: "Engineering", exams: [{u: "Admission Test", d: "17 January"}]},
+            { id: "cuet", name: "CUET", type: "Engineering", exams: [ {u: "All Units", d: "17 January"} ]},
+            { id: "duet", name: "DUET", type: "Engineering", exams: [ {u: "A Unit", d: "10 April"}, {u: "B Unit", d: "9 April"}, {u: "C Unit", d: "27 March"} ]},
+            { id: "sust", name: "SUST", type: "General", exams: [ {u: "A Unit", d: "17 January"} ]},
         ];
 
-        // --- UTILITIES ---
+        // --- ENGINE ---
 
-        const parseDateString = (str) => {
-            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            const parts = str.split(' ');
-            if (parts.length < 2) return new Date();
+        // Helper function for consistent date formatting
+        const formatDate = (date) => date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        
+        // 1. Precise Date Parser (Robustness check added)
+        const parseDate = (dStr) => {
+            if (!dStr) return null;
+            let cleanStr = dStr.split('-')[0].trim(); // Take start date if range is given
+            const parts = cleanStr.split(' ');
+            if (parts.length < 2) return null;
+
+            const monthMap = { "Jan":0,"Feb":1,"Mar":2,"Apr":3,"May":4,"Jun":5,"Jul":6,"Aug":7,"Sep":8,"Oct":9,"Nov":10,"Dec":11 };
             const day = parseInt(parts[0]);
-            const monthIdx = months.findIndex(m => parts[1].includes(m));
-            const year = (monthIdx < 5) ? 2026 : 2025; // Logic for the current admission cycle
-            return new Date(year, monthIdx, day, 10, 0, 0);
+            const monthStr = parts[1].slice(0, 3);
+            const month = monthMap[monthStr];
+            
+            // Logic: Current Time Dec 2025.
+            let year = 2025;
+            // If month is Jan-May (0-4), it's next year (2026). Otherwise 2025.
+            if (month < 5) year = 2026; 
+
+            const d = new Date(year, month, day);
+            // Ensure the date object is valid
+            if (isNaN(d.getTime())) return null; 
+
+            d.setHours(10, 0, 0, 0); // Exams usually at 10 AM
+            return d;
         };
 
-        const getCountdown = (target) => {
-            const now = new Date();
+        // 2. Time Calculator (Enhanced for high precision and status)
+        const getTimeLeft = (target, now) => {
             const diff = target - now;
-            if (diff <= 0) return { d: 0, h: 0, m: 0, s: 0, expired: true };
-            return {
+            if (diff <= 0) return { total: 0, d: 0, h: 0, m: 0, s: 0, status: "ENDED" };
+            
+            const totalHours = Math.floor(diff / (1000 * 60 * 60));
+            
+            if (totalHours < 24) return { 
+                total: diff,
+                d: 0, // Days is 0 if total hours < 24
+                h: totalHours, 
+                m: Math.floor((diff / 1000 / 60) % 60),
+                s: Math.floor((diff / 1000) % 60),
+                status: "CRITICAL" // Changed from URGENT for clarity
+            };
+
+            return { 
+                total: diff,
                 d: Math.floor(diff / (1000 * 60 * 60 * 24)),
                 h: Math.floor((diff / (1000 * 60 * 60)) % 24),
                 m: Math.floor((diff / 1000 / 60) % 60),
                 s: Math.floor((diff / 1000) % 60),
-                expired: false
+                status: "UPCOMING"
             };
         };
 
-        // --- UI COMPONENTS ---
+        // 3. User Data Manager (Local Storage)
+        const useUserData = () => {
+            const [data, setData] = useState(() => {
+                const saved = localStorage.getItem("unipro_v5_data"); 
+                return saved ? JSON.parse(saved) : {};
+            });
 
-        const Badge = ({ children, color = "brand" }) => (
-            <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider bg-${color}-100 text-${color}-700 border border-${color}-200`}>
-                {children}
-            </span>
+            const updateData = (uniId, newData) => {
+                const updated = { ...data, [uniId]: { ...data[uniId], ...newData } };
+                setData(updated);
+                localStorage.setItem("unipro_v5_data", JSON.stringify(updated));
+            };
+
+            return [data, updateData];
+        };
+
+        // --- COMPONENTS ---
+
+        // Icon Component (Improved flexibility with size prop)
+        const Icon = ({ name, size = "text-[20px]", className = "" }) => (
+            <span className={`material-symbols-rounded select-none ${size} ${className}`}>{name}</span>
         );
 
-        const Icon = ({ name, className = "" }) => (
-            <span className={`material-symbols-rounded leading-none ${className}`}>{name}</span>
-        );
+        // 4. Live Clock Component (Renders just the text to avoid re-rendering parents)
+        const LiveTicker = ({ targetDate, type = "full" }) => {
+            const [time, setTime] = useState(getTimeLeft(targetDate, new Date()));
 
-        const LiveClock = ({ target }) => {
-            const [time, setTime] = useState(getCountdown(target));
             useEffect(() => {
-                const i = setInterval(() => setTime(getCountdown(target)), 1000);
-                return () => clearInterval(i);
-            }, [target]);
+                const timer = setInterval(() => {
+                    setTime(getTimeLeft(targetDate, new Date()));
+                }, 1000);
+                return () => clearInterval(timer);
+            }, [targetDate]);
 
-            if (time.expired) return <span className="text-gray-400 font-bold">COMPLETED</span>;
+            if (time.status === "ENDED") return <span className="text-gray-500 font-bold">EXAM CONCLUDED</span>;
+
+            const isCritical = time.status === "CRITICAL";
+            const colorClass = isCritical ? "text-danger" : time.d < 10 ? "text-warn" : "text-primary";
+
+            if (type === "compact") {
+                return (
+                    <span className={`font-mono font-bold tracking-tight ${colorClass} transition-colors duration-500`}>
+                        {isCritical ? `${String(time.h).padStart(2,'0')}h` : `${time.d}d`} <span className="text-gray-500">:</span> {String(time.m).padStart(2,'0')}m <span className="text-gray-500">:</span> {String(time.s).padStart(2,'0')}s
+                    </span>
+                );
+            }
+
+            // Full Type (Grid Layout)
+            // Dynamically show Days/Hours based on proximity
+            const units = isCritical 
+                ? [['H', time.h], ['M', time.m], ['S', time.s]]
+                : [['D', time.d], ['H', time.h], ['M', time.m], ['S', time.s]];
 
             return (
-                <div className="flex gap-2 font-mono">
-                    <div className="flex flex-col items-center">
-                        <span className="text-lg font-bold text-brand-700">{time.d}</span>
-                        <span className="text-[8px] text-brand-400">DAYS</span>
+                <div className="flex gap-2 text-center transition-all duration-300">
+                    {units.map(([label, val]) => (
+                        <div key={label} className="flex flex-col items-center">
+                            <div className="bg-bg border border-gray-700 rounded px-2 py-1 min-w-[36px] min-h-[30px] flex items-center justify-center transition-shadow">
+                                <span className={`font-mono font-bold text-sm ${colorClass}`}>{String(val).padStart(2,'0')}</span>
+                            </div>
+                            <span className="text-[10px] text-gray-500 uppercase mt-0.5">{label}</span>
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        // 5. Dual Priority Hero (Refined Design)
+        const HeroSection = ({ topExams }) => {
+            if (!topExams || topExams.length === 0) return null;
+
+            // Check proximity: Are the top 2 exams within 96 hours of each other?
+            const isDualThreat = topExams.length >= 2 && 
+                (topExams[1].date - topExams[0].date) < (96 * 60 * 60 * 1000);
+
+            const PrimaryCard = ({ exam, label }) => (
+                <div className="hud-panel p-6 rounded-3xl relative overflow-hidden group border-l-4 border-primary/80 transition-all duration-500 hover:shadow-primary/30 hover:shadow-2xl">
+                    <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-10 transition-opacity duration-700"></div>
+                    <div className="absolute top-[-50%] right-[-50%] w-64 h-64 border-4 border-primary/30 rounded-full opacity-50 animate-border-spin pointer-events-none"></div>
+
+                    <div className="flex justify-between items-start mb-5 relative z-10">
+                        <div>
+                            <span className="text-xs font-bold text-primary tracking-widest uppercase mb-1 block">{label}</span>
+                            <h2 className="text-3xl font-extrabold text-white leading-tight">{exam.uniName}</h2>
+                            <p className="text-lg text-gray-400 font-medium">{exam.unit}</p>
+                        </div>
+                        <div className="text-right text-sm text-gray-400 font-mono bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+                            {formatDate(exam.date)}
+                        </div>
                     </div>
-                    <span className="text-brand-300 font-bold">:</span>
-                    <div className="flex flex-col items-center">
-                        <span className="text-lg font-bold text-brand-700">{String(time.h).padStart(2, '0')}</span>
-                        <span className="text-[8px] text-brand-400">HRS</span>
+                    <div className="bg-surface/50 rounded-xl p-5 border border-white/10 backdrop-blur-sm shadow-inner shadow-black/40">
+                        <div className="flex justify-center">
+                             <LiveTicker targetDate={exam.date} />
+                        </div>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="mb-12 mt-2">
+                    <h2 className="text-xl font-bold text-gray-300 mb-6 flex items-center gap-2">
+                        <Icon name="radar" className="text-warn" size="text-2xl" /> Critical Status Deployment
+                    </h2>
+                    {isDualThreat ? (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-in fade-in slide-in-from-bottom-6 duration-700">
+                            <PrimaryCard exam={topExams[0]} label="Priority Alpha (System Lock)" />
+                            <PrimaryCard exam={topExams[1]} label="Priority Beta (Immediate Action)" />
+                        </div>
+                    ) : (
+                        <div className="animate-in fade-in slide-in-from-bottom-6 duration-700">
+                             <PrimaryCard exam={topExams[0]} label="Next Major Exam Scheduled" />
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // 6. Today's Exam Banner
+        const TodayBanner = ({ todayExams, now }) => {
+            if (todayExams.length === 0) return null;
+
+            const examString = todayExams.map(e => `${e.uniName} (${e.unit})`).join(', ');
+
+            return (
+                <div className="hud-panel mb-8 p-5 rounded-2xl border-l-4 border-warn bg-warn/10 animate-in fade-in duration-500 shadow-xl shadow-warn/5">
+                    <div className="flex items-start gap-4">
+                        <Icon name="event_upcoming" className="text-warn text-3xl mt-1 flex-shrink-0 animate-pulse-slow" />
+                        <div>
+                            <h3 className="text-lg font-bold text-warn">Live Deployment!</h3>
+                            <p className="text-sm text-gray-300">
+                                Exam{todayExams.length > 1 ? 's are' : ' is'} happening today, {formatDate(now)}: 
+                                <span className="font-extrabold text-white block mt-1">{examString}</span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             );
         };
 
-        // --- MAIN APP ---
+        // 7. Detailed Modal (The "Desk" View) - Flexible and polished
+        const DeskModal = ({ uni, userData, onUpdateData, onClose }) => {
+            const fileInputRef = useRef(null);
+            
+            const handleFileChange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    onUpdateData(uni.id, { hasAdmit: true, admitName: file.name, admitUploadedAt: new Date().toISOString() });
+                }
+            };
 
+            const clearAdmit = () => {
+                onUpdateData(uni.id, { hasAdmit: false, admitName: "", admitUploadedAt: "" });
+            };
+
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-xl" onClick={onClose}></div>
+                    <div className="hud-panel w-full max-w-4xl rounded-3xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-300 shadow-2xl shadow-primary/30">
+                        
+                        {/* Header */}
+                        <div className="p-6 border-b border-white/10 flex justify-between items-center bg-surface/80">
+                            <div>
+                                <h2 className="text-3xl font-extrabold text-white flex items-center gap-3">
+                                    <Icon name="school" className="text-primary text-3xl" />
+                                    {uni.name} 
+                                    {userData?.hasAdmit && <span className="px-3 py-1 rounded-full text-[10px] bg-success/20 text-success border border-success/30 font-extrabold uppercase tracking-wider">ADMIT READY</span>}
+                                </h2>
+                                <p className="text-sm text-gray-400 font-mono mt-1">{uni.type} University</p>
+                            </div>
+                            <button onClick={onClose} className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition border border-white/10">
+                                <Icon name="close" />
+                            </button>
+                        </div>
+
+                        <div className="overflow-y-auto p-8 space-y-10 custom-scrollbar">
+                            
+                            {/* Section 1: All Exam Timers */}
+                            <section className="bg-surface/50 p-6 rounded-xl border border-white/10">
+                                <h3 className="text-xs font-bold text-primary uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <Icon name="alarm_on" size="text-[18px]" /> Exam Sequence Countdown
+                                </h3>
+                                <div className="grid gap-4">
+                                    {uni.exams.map((exam, idx) => {
+                                        const isPast = exam.dateObj < new Date(new Date().setHours(0,0,0,0));
+                                        const timeLeft = getTimeLeft(exam.dateObj, new Date());
+                                        const isCritical = timeLeft.status === "CRITICAL";
+
+                                        return (
+                                            <div key={idx} className={`flex items-center justify-between p-4 rounded-lg border transition-all ${isPast ? 'bg-white/5 border-transparent opacity-60' : isCritical ? 'bg-danger/10 border-danger/30 shadow-lg shadow-danger/10' : 'bg-bg/50 border-white/10 hover:bg-bg/70'}`}>
+                                                <div className="flex flex-col">
+                                                    <span className={`font-bold ${isPast ? 'text-gray-500' : 'text-gray-100'}`}>{exam.u}</span>
+                                                    <span className="text-xs text-gray-400 font-mono mt-1">{exam.d}</span>
+                                                </div>
+                                                <LiveTicker targetDate={exam.dateObj} type="full" />
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </section>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                {/* Section 2: Admit Card Vault */}
+                                <section>
+                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <Icon name="verified_user" size="text-[16px]" /> Admit Card Vault
+                                    </h3>
+                                    <div className={`border-2 border-dashed rounded-xl p-6 text-center transition-all min-h-[180px] flex flex-col justify-center ${userData?.hasAdmit ? 'border-success/50 bg-success/5' : 'border-gray-700 bg-surface/50 hover:border-primary/50'}`}>
+                                        {userData?.hasAdmit ? (
+                                            <div className="flex flex-col items-center gap-3">
+                                                <Icon name="file_present" className="text-success text-5xl" />
+                                                <p className="text-sm font-bold text-white break-all">{userData.admitName}</p>
+                                                <p className="text-[10px] text-gray-500">Uploaded: {new Date(userData.admitUploadedAt).toLocaleDateString()}</p>
+                                                <div className="flex gap-3 mt-3">
+                                                    <a href="#" target="_blank" className="px-4 py-2 bg-primary/20 text-primary border border-primary/30 rounded-full text-xs font-medium hover:bg-primary/30 flex items-center gap-1">
+                                                        <Icon name="visibility" size="text-[14px]" /> View File
+                                                    </a>
+                                                    <button onClick={clearAdmit} className="px-4 py-2 bg-danger/10 border border-danger/30 text-danger rounded-full text-xs font-medium hover:bg-danger/20 flex items-center gap-1">
+                                                        <Icon name="delete" size="text-[14px]" /> Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div onClick={() => fileInputRef.current?.click()} className="cursor-pointer">
+                                                <Icon name="cloud_upload" className="text-primary/70 text-4xl mb-2" />
+                                                <p className="text-sm text-primary/80 font-semibold">Click to upload Admit PDF/Image</p>
+                                                <p className="text-xs text-gray-500 mt-1">Simulated local file storage</p>
+                                            </div>
+                                        )}
+                                        <input type="file" ref={fileInputRef} onChange={handleFileChange} accept=".pdf,.jpg,.png" className="hidden" />
+                                    </div>
+                                </section>
+
+                                {/* Section 3: Notes */}
+                                <section className="flex flex-col h-full">
+                                    <h3 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <Icon name="edit_note" size="text-[16px]" /> Command Notes
+                                    </h3>
+                                    <textarea 
+                                        className="hud-input w-full flex-1 rounded-xl p-4 text-sm resize-none min-h-[180px] shadow-inner shadow-black/20"
+                                        placeholder="Write syllabus reminders, seat plan info, or strategies..."
+                                        value={userData?.notes || ""}
+                                        onChange={(e) => onUpdateData(uni.id, { notes: e.target.value })}
+                                    ></textarea>
+                                </section>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // 8. Main Dashboard
         const App = () => {
             const [filter, setFilter] = useState("All");
             const [search, setSearch] = useState("");
-            const [pinned, setPinned] = useState(() => JSON.parse(localStorage.getItem('unipro_pinned') || '[]'));
-            const [progress, setProgress] = useState(() => JSON.parse(localStorage.getItem('unipro_progress') || '{}'));
-            const [selectedUni, setSelectedUni] = useState(null);
+            const [userData, setUserData] = useUserData();
+            const [modalUni, setModalUni] = useState(null);
+            
+            const now = useMemo(() => new Date(), []);
 
-            // Persist Pinned
-            useEffect(() => {
-                localStorage.setItem('unipro_pinned', JSON.stringify(pinned));
-            }, [pinned]);
-
-            // Persist Progress
-            useEffect(() => {
-                localStorage.setItem('unipro_progress', JSON.stringify(progress));
-            }, [progress]);
-
-            const togglePin = (id, e) => {
-                e.stopPropagation();
-                setPinned(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
-            };
-
-            const updateProgress = (id, val) => {
-                setProgress(prev => ({ ...prev, [id]: val }));
-            };
-
+            // Process Data
             const processedData = useMemo(() => {
-                return UNI_DATA.map(uni => {
-                    const parsedExams = uni.exams.map(e => ({ ...e, dateObj: parseDateString(e.d) }));
-                    const next = parsedExams.find(e => e.dateObj > new Date()) || parsedExams[0];
-                    return { ...uni, exams: parsedExams, next };
-                }).filter(uni => {
-                    const matchesSearch = uni.name.toLowerCase().includes(search.toLowerCase());
-                    const matchesFilter = filter === "All" || uni.type === filter;
-                    return matchesSearch && matchesFilter;
-                }).sort((a, b) => {
-                    const aPinned = pinned.includes(a.id);
-                    const bPinned = pinned.includes(b.id);
-                    if (aPinned !== bPinned) return bPinned - aPinned;
-                    return a.next.dateObj - b.next.dateObj;
-                });
-            }, [search, filter, pinned]);
+                return RAW_DATA.map(uni => {
+                    // Parse Dates
+                    const validExams = uni.exams
+                        .map(e => ({ ...e, dateObj: parseDate(e.d) }))
+                        .filter(e => e.dateObj)
+                        .sort((a,b) => a.dateObj - b.dateObj);
 
-            const nextPrimaryExam = processedData.find(u => u.next.dateObj > new Date());
+                    // Find the next exam strictly after 'now'
+                    const nextExam = validExams.find(e => e.dateObj > now);
+                    
+                    return {
+                        ...uni,
+                        exams: validExams,
+                        nextExam,
+                        // Helper for sorting: put concluded exams at the end
+                        nextDate: nextExam ? nextExam.dateObj : new Date(9999, 0, 1) 
+                    };
+                });
+            }, [now]);
+
+            // Dynamically generate filter list based on available data
+            const availableTypes = useMemo(() => {
+                const types = new Set(RAW_DATA.map(d => d.type));
+                return ['All', 'Pinned', ...Array.from(types).sort()];
+            }, []);
+
+
+            // Global Exam List for Hero
+            const topUpcomingExams = useMemo(() => {
+                const allExams = [];
+                processedData.forEach(uni => {
+                    uni.exams.forEach(ex => {
+                        if (ex.dateObj > now) {
+                            allExams.push({
+                                uniName: uni.name,
+                                uniId: uni.id,
+                                unit: ex.u,
+                                date: ex.dateObj
+                            });
+                        }
+                    });
+                });
+                return allExams.sort((a, b) => a.date - b.date).slice(0, 2);
+            }, [processedData, now]);
+
+            // Today's Exams
+            const todayExams = useMemo(() => {
+                const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const todayEnd = new Date(todayStart.getTime() + (24 * 60 * 60 * 1000));
+                
+                const exams = [];
+                processedData.forEach(uni => {
+                    uni.exams.forEach(ex => {
+                        // Check if the exam date falls within today (inclusive start, exclusive end)
+                        if (ex.dateObj >= todayStart && ex.dateObj < todayEnd) {
+                            exams.push({ uniName: uni.name, unit: ex.u });
+                        }
+                    });
+                });
+                return exams;
+            }, [processedData, now]);
+
+            // Filtering & Sorting for Grid
+            const gridData = processedData
+                .filter(uni => {
+                    const matchesFilter = filter === "All" || uni.type === filter;
+                    const matchesSearch = uni.name.toLowerCase().includes(search.toLowerCase()) || uni.type.toLowerCase().includes(search.toLowerCase());
+                    if (filter === "Pinned") return userData[uni.id]?.isPinned;
+                    return matchesFilter && matchesSearch;
+                })
+                .sort((a, b) => {
+                    // 1. Pinned first
+                    const aPin = userData[a.id]?.isPinned ? 1 : 0;
+                    const bPin = userData[b.id]?.isPinned ? 1 : 0;
+                    if (aPin !== bPin) return bPin - aPin;
+                    // 2. Then by next date (earliest first)
+                    return a.nextDate - b.nextDate;
+                });
+
+            const togglePin = (id) => {
+                const current = userData[id]?.isPinned;
+                setUserData(id, { isPinned: !current });
+            };
 
             return (
-                <div className="max-w-6xl mx-auto px-4 py-8">
+                <div className="min-h-screen pb-20 relative">
                     
-                    {/* Header Section */}
-                    <header className="mb-12 text-center md:text-left flex flex-col md:flex-row justify-between items-end gap-6">
-                        <div>
-                            <div className="flex items-center gap-3 mb-2 justify-center md:justify-start">
-                                <div className="p-2 bg-brand-500 rounded-xl shadow-lg shadow-brand-200">
-                                    <Icon name="rocket_launch" className="text-white text-3xl" />
-                                </div>
-                                <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
-                                    UniPro <span className="hero-gradient">Zenith</span>
-                                </h1>
+                    {/* Navigation */}
+                    <nav className="sticky top-0 z-40 border-b border-white/5 bg-bg/80 backdrop-blur-xl shadow-lg shadow-black/30">
+                        <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-green-500 flex items-center justify-center font-extrabold text-xl text-bg">Z</div>
+                                <span className="font-extrabold text-2xl tracking-tighter text-white">UniPro <span className="text-primary font-bold">Zenith</span></span>
+                                <span className="hidden sm:inline text-xs ml-3 bg-white/5 text-gray-400 px-2 py-1 rounded-full font-mono">V5.1</span>
                             </div>
-                            <p className="text-slate-500 font-medium">Exam Date Master & Admission Command Center</p>
+                            <div className="flex items-center hud-input rounded-full px-5 py-2 w-full md:w-72 border-none">
+                                <Icon name="search" size="text-[18px]" className="text-gray-500 mr-3" />
+                                <input 
+                                    type="text" 
+                                    placeholder="Search Uni or Type..." 
+                                    className="bg-transparent border-none outline-none text-sm w-full placeholder-gray-500"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                            </div>
                         </div>
+                    </nav>
+
+                    <div className="max-w-7xl mx-auto px-6 pt-10">
                         
-                        {nextPrimaryExam && (
-                            <div className="glass-card p-4 rounded-2xl flex items-center gap-6 border-l-4 border-l-brand-500">
-                                <div>
-                                    <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest">Closest Priority</p>
-                                    <p className="font-bold text-slate-800">{nextPrimaryExam.name}</p>
-                                </div>
-                                <div className="h-10 w-[1px] bg-slate-200"></div>
-                                <LiveClock target={nextPrimaryExam.next.dateObj} />
+                        {/* 0. Today's Exams Banner */}
+                        {!search && filter === "All" && <TodayBanner todayExams={todayExams} now={now} />}
+
+                        {/* 1. HUD Hero */}
+                        {!search && filter === "All" && <HeroSection topExams={topUpcomingExams} />}
+
+                        {/* 2. Controls (Dynamically generated filters) */}
+                        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+                            <div className="flex overflow-x-auto gap-3 pb-2 md:pb-0 w-full md:w-auto no-scrollbar">
+                                {availableTypes.map(f => (
+                                    <button 
+                                        key={f}
+                                        onClick={() => setFilter(f)}
+                                        className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap border ${filter === f ? 'bg-primary/20 border-primary text-primary shadow-[0_0_15px_rgba(74,222,128,0.2)]' : 'bg-surface border-white/5 text-gray-400 hover:text-white hover:bg-surface/80'}`}
+                                    >
+                                        {f}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* 3. The Grid */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {gridData.map(uni => {
+                                const uData = userData[uni.id] || {};
+                                const isPinned = uData.isPinned;
+                                const hasAdmit = uData.hasAdmit;
+
+                                return (
+                                    <div 
+                                        key={uni.id} 
+                                        onClick={() => setModalUni(uni)}
+                                        className="hud-card rounded-2xl p-6 cursor-pointer group flex flex-col justify-between min-h-[200px]"
+                                    >
+                                        {/* Scan Effect on Hover */}
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent -translate-x-full group-hover:animate-scan pointer-events-none"></div>
+
+                                        <div className="flex justify-between items-start mb-5">
+                                            <div className="flex items-start gap-3">
+                                                <div className={`w-11 h-11 rounded-lg flex items-center justify-center font-bold text-xl border ${hasAdmit ? 'text-success border-success/30 bg-success/10 shadow-[0_0_12px_rgba(16,185,129,0.1)]' : 'text-primary border-primary/30 bg-primary/10'}`}>
+                                                    {uni.name.charAt(0)}
+                                                </div>
+                                                <div className="pt-0.5">
+                                                    <h3 className="font-bold text-gray-100 group-hover:text-primary transition-colors text-lg leading-tight">{uni.name}</h3>
+                                                    <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
+                                                        <span>{uni.type}</span>
+                                                        {hasAdmit && <span className="text-success flex items-center gap-0.5 font-medium"><Icon name="check_circle" size="text-[14px]" /> Admit Ready</span>}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); togglePin(uni.id); }}
+                                                className={`transition-colors p-2 -mr-2 -mt-2 rounded-full ${isPinned ? 'text-primary hover:text-white bg-primary/20' : 'text-gray-600 hover:text-white hover:bg-white/10'}`}
+                                            >
+                                                <Icon name={isPinned ? "keep" : "push_pin"} />
+                                            </button>
+                                        </div>
+
+                                        <div className="mt-auto">
+                                            {uni.nextExam ? (
+                                                <div className="bg-bg/60 rounded-lg p-3 border border-white/5 shadow-inner shadow-black/20">
+                                                    <div className="flex justify-between items-end mb-2">
+                                                        <span className="text-xs text-gray-400 font-medium">Next Exam: <span className="font-bold text-white">{uni.nextExam.u}</span></span>
+                                                        <span className="text-[10px] text-gray-600 font-mono">{uni.nextExam.d}</span>
+                                                    </div>
+                                                    <LiveTicker targetDate={uni.nextExam.dateObj} type="compact" />
+                                                </div>
+                                            ) : (
+                                                <div className="p-4 text-center text-sm text-gray-600 italic border border-white/5 rounded-lg bg-bg/50">
+                                                    Deployment Cycle Concluded
+                                                </div>
+                                            )}
+                                        </div>
+                                        
+                                        {/* Notes Indicator */}
+                                        {uData.notes && (
+                                            <div title="Notes Available" className="absolute top-2 left-2 w-2 h-2 bg-warn rounded-full border border-bg"></div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        {gridData.length === 0 && (
+                             <div className="text-center p-20 text-gray-500 text-lg border-2 border-dashed border-gray-700/50 rounded-2xl mt-10">
+                                <Icon name="inbox_customize" className="text-5xl mb-3" />
+                                <p>No universities match the current filters or search query.</p>
+                                <p className="text-sm mt-1">Try changing the filter or clearing the search.</p>
                             </div>
                         )}
-                    </header>
-
-                    {/* Toolbar */}
-                    <div className="mb-8 flex flex-col md:flex-row gap-4 items-center">
-                        <div className="relative flex-1 w-full">
-                            <Icon name="search" className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                            <input 
-                                type="text"
-                                placeholder="Search university or unit..."
-                                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-white/50 border border-white focus:ring-2 focus:ring-brand-400 outline-none transition-all shadow-sm"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex bg-white/40 p-1 rounded-2xl border border-white shadow-sm overflow-x-auto no-scrollbar w-full md:w-auto">
-                            {["All", "Engineering", "General", "Medical", "Agriculture"].map(f => (
-                                <button
-                                    key={f}
-                                    onClick={() => setFilter(f)}
-                                    className={`px-6 py-2 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${filter === f ? 'bg-white text-brand-600 shadow-sm' : 'text-slate-500 hover:text-brand-500'}`}
-                                >
-                                    {f}
-                                </button>
-                            ))}
-                        </div>
                     </div>
 
-                    {/* Main Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {processedData.map(uni => {
-                            const isPinned = pinned.includes(uni.id);
-                            const prog = progress[uni.id] || 0;
-                            
-                            return (
-                                <div 
-                                    key={uni.id}
-                                    onClick={() => setSelectedUni(uni)}
-                                    className="glass-card rounded-3xl p-6 cursor-pointer group relative overflow-hidden"
-                                >
-                                    {/* Decoration */}
-                                    <div className="absolute -right-4 -top-4 w-24 h-24 bg-brand-100/50 rounded-full blur-2xl group-hover:bg-brand-200/50 transition-colors"></div>
-
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div>
-                                            <Badge color={uni.type === 'Engineering' ? 'indigo' : 'brand'}>{uni.type}</Badge>
-                                            <h3 className="text-xl font-extrabold text-slate-800 mt-2 group-hover:text-brand-600 transition-colors">{uni.name}</h3>
-                                        </div>
-                                        <button 
-                                            onClick={(e) => togglePin(uni.id, e)}
-                                            className={`p-2 rounded-xl transition-all ${isPinned ? 'bg-brand-500 text-white' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}`}
-                                        >
-                                            <Icon name={isPinned ? "keep" : "keep_off"} className="text-xl" />
-                                        </button>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100">
-                                            <div className="flex justify-between items-center mb-1">
-                                                <span className="text-[10px] font-bold text-slate-400 uppercase">Target Unit</span>
-                                                <span className="text-[10px] font-bold text-brand-500 bg-brand-50 px-2 py-0.5 rounded">{uni.next.d}</span>
-                                            </div>
-                                            <p className="font-bold text-slate-700">{uni.next.u}</p>
-                                        </div>
-
-                                        {/* Progress Tracker */}
-                                        <div>
-                                            <div className="flex justify-between text-[10px] font-bold mb-1 px-1">
-                                                <span className="text-slate-400 uppercase">Preparation</span>
-                                                <span className="text-brand-600">{prog}%</span>
-                                            </div>
-                                            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                                                <div 
-                                                    className="h-full bg-gradient-to-r from-brand-400 to-brand-600 transition-all duration-500"
-                                                    style={{ width: `${prog}%` }}
-                                                ></div>
-                                            </div>
-                                        </div>
-
-                                        <div className="pt-2 flex justify-between items-center">
-                                            <LiveClock target={uni.next.dateObj} />
-                                            <div className="w-8 h-8 rounded-full bg-brand-50 flex items-center justify-center text-brand-500 group-hover:bg-brand-500 group-hover:text-white transition-all">
-                                                <Icon name="arrow_forward" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* Detailed Desk Modal */}
-                    {selectedUni && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-                            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setSelectedUni(null)}></div>
-                            <div className="glass-card w-full max-w-2xl rounded-[32px] overflow-hidden flex flex-col relative animate-in fade-in zoom-in duration-300">
-                                
-                                <div className="p-8 border-b border-slate-100 flex justify-between items-start">
-                                    <div>
-                                        <Badge>{selectedUni.type}</Badge>
-                                        <h2 className="text-3xl font-extrabold text-slate-800 mt-2">{selectedUni.name}</h2>
-                                    </div>
-                                    <button 
-                                        onClick={() => setSelectedUni(null)}
-                                        className="p-2 bg-slate-100 rounded-full hover:bg-slate-200 transition-colors"
-                                    >
-                                        <Icon name="close" />
-                                    </button>
-                                </div>
-
-                                <div className="p-8 overflow-y-auto max-h-[70vh] space-y-8 no-scrollbar">
-                                    
-                                    {/* Exam Timeline */}
-                                    <section>
-                                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                            <Icon name="event_repeat" className="text-brand-500" /> Complete Exam Schedule
-                                        </h4>
-                                        <div className="space-y-3">
-                                            {selectedUni.exams.map((ex, i) => (
-                                                <div key={i} className="flex items-center justify-between p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                                                    <div>
-                                                        <p className="font-bold text-slate-700">{ex.u}</p>
-                                                        <p className="text-xs text-slate-400">{ex.d}</p>
-                                                    </div>
-                                                    <LiveClock target={ex.dateObj} />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </section>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                        {/* Preparation Slider */}
-                                        <section>
-                                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Readiness Level</h4>
-                                            <div className="bg-brand-50 p-6 rounded-3xl border border-brand-100">
-                                                <input 
-                                                    type="range" 
-                                                    min="0" max="100" 
-                                                    value={progress[selectedUni.id] || 0}
-                                                    onChange={(e) => updateProgress(selectedUni.id, e.target.value)}
-                                                    className="w-full accent-brand-500 mb-4"
-                                                />
-                                                <p className="text-center font-black text-4xl text-brand-600">
-                                                    {progress[selectedUni.id] || 0}%
-                                                </p>
-                                                <p className="text-center text-[10px] font-bold text-brand-400 uppercase mt-1">Syllabus Covered</p>
-                                            </div>
-                                        </section>
-
-                                        {/* Quick Notes */}
-                                        <section>
-                                            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Strategic Notes</h4>
-                                            <textarea 
-                                                placeholder="Enter seat plan, building info or strategy..."
-                                                className="w-full h-32 p-4 rounded-3xl bg-slate-50 border border-slate-200 text-sm focus:ring-2 focus:ring-brand-400 outline-none resize-none"
-                                            ></textarea>
-                                        </section>
-                                    </div>
-
-                                    <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100 flex gap-3">
-                                        <Icon name="info" className="text-amber-500" />
-                                        <p className="text-xs text-amber-700 leading-relaxed font-medium">
-                                            Exam dates are based on the latest notification. Always cross-verify with the official university website 24 hours before the exam.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
-                                    <button 
-                                        onClick={() => setSelectedUni(null)}
-                                        className="px-8 py-3 bg-brand-500 text-white rounded-2xl font-bold shadow-lg shadow-brand-200 hover:bg-brand-600 transition-all"
-                                    >
-                                        Close Command Desk
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    {modalUni && (
+                        <DeskModal 
+                            uni={modalUni} 
+                            userData={userData[modalUni.id]} 
+                            onUpdateData={setUserData} 
+                            onClose={() => setModalUni(null)} 
+                        />
                     )}
 
-                    {/* Footer Info */}
-                    <footer className="mt-20 py-8 border-t border-slate-200 text-center">
-                        <p className="text-slate-400 text-xs font-bold uppercase tracking-tighter">
-                            Built for Excellence &bull; Zen Intelligence Engine v5.2
-                        </p>
-                    </footer>
                 </div>
             );
         };
